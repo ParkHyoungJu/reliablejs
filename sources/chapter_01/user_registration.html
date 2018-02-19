@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+var Users = Users || {};
+Users.registration = function(userValidator, userRegister, userDisplay) {
+    return {
+        validateAndRegister: function validateAndDisplayUser(user) {
+            if (!userValidator.userIsValid(user)) {
+                throw new Error("사용자 인증이 실패했습니다.");
+            }
+
+            userRegister.registerUser(user);
+
+            userDisplay.showRegistrationThankYou(user);
+        }
+    };
+};
+
+Users.userValidator = function() {
+    return {
+        userIsValid: function(user) {
+            if (!user || user.name === "" || user.password === "" || user.password.length < 6) {
+                return false;
+            }
+            return true;
+        }
+    };
+};
+
+Users.userRegister = function() {
+    return {
+        registerUser: function registerUser(user) {
+          /*$.post("http://yourapplication.com", user)
+              .done(function(){
+                  // success registration
+              })
+                .fail(function(){
+                  throw new Error("사용자 등록에 실패했습니다.");
+              });
+          */
+        }
+    };
+};
+
+Users.userDisplay = function() {
+    return {
+        showRegistrationThankYou: function(user) {
+            $("#user-message").text("가입해주셔서 감사합니다. " + user.name + "님");
+        }
+    };
+};
+
+$(function(){
+  var userValidator = new Users.userValidator(),
+  userRegister = new Users.userRegister(),
+  userDisplay = new Users.userDisplay();
+
+  var user = {
+    name: 'Eddie Yim',
+    password: '123455678'
+  };
+
+  Users
+    .registration(userValidator, userRegister, userDisplay)
+    .validateAndRegister(user);
+});
+</script>
+</head>
+<body>
+  <span id="user-message"></span>
+</body>
+</html>
