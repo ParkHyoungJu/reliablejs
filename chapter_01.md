@@ -56,10 +56,10 @@ Users.registration = function() {
             if (!user || user.name === "" || user.password === "" || user.password.length < 6) {
                 throw new Error("사용자 인증이 실패했습니다.");
             }
-            
+
             // 2. 검증을 마치 user 객체를 서버에 전송: 서버와 통신
             $.post("http://yourapplication.com/user", user);
-            
+
             // 3. UI에 메시지 표시: UI 직접 다루기
             $("#user-message").text("가입해주셔서 감사합니다." + user.name + "님");
         }
@@ -67,7 +67,7 @@ Users.registration = function() {
 };
 ```
 
-##### TODO
+##### TODO ![example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/user_registration.html)
 
 ```javascript
 var Users = Users || {};
@@ -77,9 +77,9 @@ Users.registration = function(userValidator, userRegister, userDisplay) {
             if (!userValidator.userIsValid(user)) {
                 throw new Error("사용자 인증이 실패했습니다.");
             }
-            
+
             userRegister.registerUser(user);
-            
+
             userDisplay.showRegistrationThankYou(user);
         }
     };
