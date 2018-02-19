@@ -67,7 +67,7 @@ Users.registration = function() {
 };
 ```
 
-##### TODO ![example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/user_registration.html)
+##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/user_registration.html)
 
 ```javascript
 var Users = Users || {};
