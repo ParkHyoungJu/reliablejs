@@ -11,11 +11,15 @@
 + 자바스크립트와 다른 프로그래밍 언어의 **차이점을 스스로 익혀야 한다.**
 + 자바스크립트는 **싱글 스레드**로 움직인다.
   + 자바스크립트 엔지은 이벤트 루프에서 한 번에 하나씩 함수를 꺼내 실행한다.
+
 #### 1.1.2 대규모 시스템에서 자바스크립트 함정을 피하라
 
 + 스크립트는 모듈이 아니다.
 + 스코프는 중첩 함수로 다스린다.
 + 규약을 지켜 코딩한다.
+
+[example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_user_registration.html)
+
 
 #### 1.1.3 소프트웨어 공학 원칙을 적용하라
 
@@ -82,10 +86,11 @@ Users.registration = function() {
 };
 ```
 
-##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/user_registration.html)
+##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_user_registration.html)
 
 ```javascript
 var Users = Users || {};
+// 주입된 객체의 사용
 Users.registration = function(userValidator, userRegister, userDisplay) {
     return {
         validateAndRegister: function validateAndDisplayUser(user) {
