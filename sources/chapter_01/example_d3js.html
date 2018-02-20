@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+var rj3 = {};
+
+rj3.svg = {};
+
+rj3.svg.line = function(){
+  // 변수에 할당된 익명함수들
+  var getX = function(point){
+    return point[0];
+  },
+  getY = function(point){
+    return point[1];
+  },
+  interpolate = function(points){
+    return points.join("L");
+  };
+
+  /* rj3.svg.line 함수 내부에 중첩된 함수 line
+   * 자바스크립트 함수는 다른 함수 내부에 중첩될 수 있으며,
+   * 이는 스코프를 다스리는 중요한 수단이다.
+   */
+  function line(data) {
+    var segments = [],
+        points = [],
+        i = -1,
+        n = data.length,
+        d;
+    // 중첩 함수 line의 내부 함수(private)
+    function segment() {
+      segments.push("M", interpolate(points));
+    }
+
+    while (++i < n) {
+      d = data[i];
+      points.push([+getX.call(this, d, i), +getY.call(this, d, i)]);
+    }
+
+    if (points.length) {
+      segment();
+    }
+
+    return segments.length ? segments.join("") : null;
+  }
+
+  /* 내부 중첩 함수 line의 속성 x라는 메서드로 할당되는 익명 함수
+   * 자바스크립트의 함수는 일급 시민(First-class Citizen)이기 떄문에,
+   * 함수 자제를 파라미터로 전달이 가능하다.
+   * x는 라인의 멤버(속성)임에도 segment같은 line의 지역 변수는 볼 수 없지만,
+   * 에워싼 상위 함수의 getX, getY, interpolate 변수는 볼 수 있다.
+   */
+  line.x = function(funcToGetX) {
+    // arguments는 호출한 함수의 인자를 담은 유사 배열(array-like)로 함수 내부에서 사용됨
+    if (!arguments.length) {
+      return getX;
+    }
+    getX = funcToGetX;
+    return line;// 70번 라인에 실제 반환되는 함수 line을 반환함으로써 함수 체이닝이 가능해짐
+  };
+
+  line.y = function(funcToGetY) {
+    if (!arguments.length) {
+      return getY;
+    }
+    getY = funcToGetY;
+    return line;
+  };
+
+  // 함수 line 반환
+  return line;
+};
+</script>
+</head>
+<body>
+  <h1>Example rj3</h1>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <path id="path" fill="transparent" stroke="black"></path>
+    <path id="path2" fill="transparent" stroke="red"></path>
+    <path id="path3" fill="transparent" stroke="blue"></path>
+  </svg>
+  <script defer="defer">
+  (function(){
+    var arrayData = [
+          [10, 130],
+          [100, 60],
+          [190, 160],
+          [280, 10]
+        ],
+        lineGenerator = rj3.svg.line(),
+        path = lineGenerator(arrayData);
+
+    document.getElementById("path").setAttribute('d', path);
+  }());
+
+  (function(){
+    var data = [
+      { x: 20, y: 60 },
+      { x: 140, y: 20 },
+      { x: 160, y: 30 },
+      { x: 210, y: 15 },
+      { x: 220, y: 40 },
+      { x: 300, y: 40 }
+    ],
+
+    lineGenerator = rj3.svg.line()
+      .x(function(d){
+        return d.x;
+      })
+      .y(function(d){
+        return d.y;
+      }),
+      path = lineGenerator(data);
+
+      document.getElementById('path2').setAttribute('d', path);
+  })();
+
+  (function(){
+    /* Duck Typing
+     * "오리처럼 생겨서 오리처럼 걷고 오리처럼 꽥꽥 소리를 낸다면 그건 오리다"
+     * XYPair 함수 객체를 사용해 데이터를 구성하더라도 x, y 속성과 그 값만 존재한다면,
+     * 동일한 실행을 보장한다.
+     */
+    function XYPair(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    var data = [
+      new XYPair(40, 100),
+      new XYPair(100, 10),
+      new XYPair(200, 100),
+      new XYPair(300, 10),
+      new XYPair(400, 120)
+    ],
+
+    lineGenerator = rj3.svg.line()
+      .x(function(d){
+        return d.x;
+      })
+      .y(function(d){
+        return d.y;
+      }),
+      path = lineGenerator(data);
+
+      document.getElementById('path3').setAttribute('d', path);
+  })();
+  </script>
+</body>
+</html>
