@@ -6,56 +6,56 @@
 
 #### 여행사의 예약 시스템 중 예약 생성 모듈
 
-> TDD 없이 작성한 createReservation 모듈
->
-> ```javascript
-> function createReservation(passenger, flight) {
->     return {
->       	passengerInfo: passenger,
->         flightInfo: flight
->     };
-> }
-> ```
->
-> [Jasmine](https://jasmine.github.io/)을 통한 테스트 대상을 완성한 다음 작성한 createReservation 테스트 코드
->
-> ```javascript
-> describe('createReservation(passenger, flight)', function(){
->     it('주어진 passenger를 passengerInfo 프로퍼티에 할당한다', function(){
->         var testPassenger = {
->             firstName: '윤지',
->             lastName: '김'
->         };
->         
->         var testFlight = {
->             number: '3443',
->             carrier: '대한항공',
->             destination: '울산'
->         };
->         
->         var reservation = createReservation(testPassenger, testFlight);
->         expect(reservation.passengerInfo).toBe(testPassenger);
->     });
->     
->     it('주어진 flight를 flightInfo 프로퍼티에 할당한다', function(){
->         var testPassenger = {
->             firstName: '윤지',
->             lastName: '김'
->         };
->         
->         var testFlight = {
->             number: '3443',
->             carrier: '대한항공',
->             destination: '울산'
->         };
->         
->         var reservation = createReservation(testPassenger, testFlight);
->         expect(reservation.flightInfo).toBe(testFlight);
->     });
-> });
-> ```
->
-> [example](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_jasmine.html)
+TDD 없이 작성한 createReservation 모듈
+
+```javascript
+function createReservation(passenger, flight) {
+    return {
+        passengerInfo: passenger,
+        flightInfo: flight
+    };
+}
+```
+
+[Jasmine](https://jasmine.github.io/)을 통한 테스트 대상을 완성한 다음 작성한 createReservation 테스트 코드
+
+```javascript
+describe('createReservation(passenger, flight)', function(){
+    it('주어진 passenger를 passengerInfo 프로퍼티에 할당한다', function(){
+        var testPassenger = {
+            firstName: '윤지',
+            lastName: '김'
+        };
+        
+        var testFlight = {
+            number: '3443',
+            carrier: '대한항공',
+            destination: '울산'
+        };
+        
+        var reservation = createReservation(testPassenger, testFlight);
+        expect(reservation.passengerInfo).toBe(testPassenger);
+    });
+    
+    it('주어진 flight를 flightInfo 프로퍼티에 할당한다', function(){
+        var testPassenger = {
+            firstName: '윤지',
+            lastName: '김'
+        };
+        
+        var testFlight = {
+            number: '3443',
+            carrier: '대한항공',
+            destination: '울산'
+        };
+        
+        var reservation = createReservation(testPassenger, testFlight);
+        expect(reservation.flightInfo).toBe(testFlight);
+    });
+});
+```
+
+[example](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_jasmine.html)
 
 #### 2.1.1 잘못된 코드 발견하기
 
@@ -72,20 +72,19 @@
 + 코드의 테스트 용이성과 테스트 진행 정도는 직접적인 상관관계가 있다.
 + 테스트성을 목표로 하면 **SOLID**한 코드를 작성하게 된다.
 
-> createReservation 에 웹 서비스 연동 기능이 추가된다고 한다면
->
-> ```javascript
-> describe('createReservation(passenger, flight)', function(){
->     // Existing test
->     it('예약 정보를 웹 서비스 종단점으로 전송한다', function(){
->     	// createReservation이 웹 서비스 통신까지 맡아야 하나? 
->     });
-> });
-> ```
->
-> 웹 서비스 통신 전담 객체가 만들어 테스트 하는 편이 바람직하다.
->
-> 코드 테스트성을 극대화하면 SOLID 원칙을 어긴 코드를 쉽게 솎아낼 수 있다.
+createReservation 에 웹 서비스 연동 기능이 추가된다고 한다면
+```javascript
+describe('createReservation(passenger, flight)', function(){
+    // Existing test
+    it('예약 정보를 웹 서비스 종단점으로 전송한다', function(){
+    	// createReservation이 웹 서비스 통신까지 맡아야 하나? 
+    });
+});
+```
+
+서비스 통신 전담 객체가 만들어 테스트 하는 편이 바람직하다.
+
+코드 테스트성을 극대화하면 SOLID 원칙을 어긴 코드를 쉽게 솎아낼 수 있다.
 
 #### 2.1.3 꼭 필요한 코드만 작성하기
 
@@ -109,19 +108,86 @@
 
 #### 2.1.7  Jasmine 들어가기
 
-테스트 꾸러미와 스펙
-
-스파이
-
-
-
-
-
-****
-
-
+**TODO**
 
 ### 2.2 의존성 주입 프레임워크
+
+#### 2.2.1 의존성 주입이란?
+
+```javascript
+Attendee = function(attendeeId) {// TODO Linting
+    
+    // 'new'로 생성하도록 강제한다.
+    if (!(this instanceof Attendee)) {
+        return new Attendee(attendeeId);
+    }
+    
+    this.attendeeId = attendeeId;
+    
+    this.service = new ConferenceWebSvc();
+    this.messenger = new Messenger();
+};
+
+// 주어진 세션에 좌석 예약을 시도한다.
+// 성공/실패 여부를 메시지로 알려준다.
+Attendee.prototype.reserve = function(sessionId) {
+    if (this.service.reserve(this.attendeeId, sessionId)) {
+        this.messenger.success(
+            '좌석 예약이 완료되었습니다!'
+            + ' 고객님은 ' + this.service.getRemainingReservation()
+            + ' 좌석을 추가 예약하실 수 있습니다.');
+    } else {
+        this.messenger.failure('죄송합니다. 해당 죄석은 예약하실 수 없습니다.');
+    }
+}
+```
+
+**코드의 문제점과 해결**
+
+Attendee의 함수 클래스 안에 함수 클래스 ConferenceWebSvc와 함수 클래스 Messenger를 인스턴스화(instantiate)하는 코드가 존재한다. 이로 인해 Attendee 함수 클래스는 ConferenceWebSvc 함수 클래스와  Messenger 함수 클래스의 변경에 대해 상당히 영향을 강하게 받게 된다. 즉, Attendee 함수 클래스가 ConferenceWebSvc, Messenger 함수 클래스의 강한 의존성, 강한 결합을 이루게 된다. 이는 개별 함수 클래스의 독립적 기능을 방해하는 요인이 된다.
+
+이에 대해 인스턴스화 코드를 제거하고, 실행 시점에 Attendee 함수 클래스 바깥 쪽에서 ConferenceWebSvc와 Messenger 함수 클래스의 인스턴스를 생성하여 파라미터로 넘겨 받아 참조하는 방식을 취하여 의존성을 낮춘다.
+
+또한 이로 인해 service, messenger의 역할은 주입 상위 주체인 Attendee가 아니라 Attendee 함수 클래스에 각각 주입된 ConferenceWebSvc와 Messenger에게 온전히 넘어간다. 이를 제어의 역전(Inversion of Control)이라고 한다.
+
+```javascript
+// 빈자의 의존성 주입(poor man's dependency injection)
+Attendee = function(service, messenger, attendeeId) {
+    if (!(this instanceof Attendee)) {
+        return new Attendee(attendeeId);
+    }
+    
+    this.attendeeId = attendeeId;
+    
+    this.service = service;
+    this.messenger = messenger;
+}
+
+// 운영 환경:
+var attendee = new Attendee(new ConferenceWebSvc(), new Messenger(), id);
+
+// 개발(테스트) 환경:
+var attendee = new Attendee(fakeService, fareMessenger, id);
+```
+
+#### 2.2.2 의존성을 주입하여 믿음직한 코드 만들기(장점)
+
++ DI는 실제 객체보다 주입한 스파이나 모의 객체에 더 많은 제어권을 안겨준다.
++ 이로 인해 다양한 에러 조건과 기이한 상황을 만들어내기 쉬어 진다.
++ DI를 통해 코드의 재사용성을 높인다.
+
+#### 2.2.3 의존성 주입의 모든 것
+
+**다음 조건에 부합한다면, DI를 생각해볼 것**
+
++ 객체 또는 의존성 중 어느 하나라도 DB, 설정 파일, HTTP, 기타 인프라 등의 외부 자원에 의존하는가?
++ 객체 내부에서 발생할지 모를 에러를 테스트에서 고려해야 하나?
++ 특정한 방향으로 객체를 작동시켜야 할 테스트가 있는가?
++ 이 서드파티(third-party) 제공 객체가 아니라 온전히 내가 소유한 객체인가?
+
+![DI Container](http://cfile23.uf.tistory.com/image/99B4C4345A956FFC35F1C2)
+
+
 
 ### 2.3 애스팩트 툴킷
 
