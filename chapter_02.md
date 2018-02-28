@@ -187,9 +187,25 @@ var attendee = new Attendee(fakeService, fareMessenger, id);
 
 ![DI Container](http://cfile23.uf.tistory.com/image/99B4C4345A956FFC35F1C2)
 
+#### 2.2.4 사례연구: 경량급 의존성 프레임워크 개발(SKIP)
 
+#### 2.2.5 의존성 주입 프레임워크 활용(SKIP)
+
+#### 2.2.6 최신 의존성 주입 프레임워크
+
+[RequireJS](http://requirejs.org/)
+
+[AngularJS](https://angularjs.org/)
+
+[Angular2+](https://angular.io/)
 
 ### 2.3 애스팩트 툴킷
+
+컴퓨팅에서 관점 지향 프로그래밍(aspect-oriented programming, AOP)은 횡단 관심사(cross-cutting concern)의 분리를 허용함으로써 모듈성을 증가시키는 것이 목적인 프로그래밍 패러다임이다. 코드 그 자체를 수정하지 않는 대신 기존의 코드에 추가 동작(어드바이스)을 추가함으로써 수행하며, "함수의 이름이 'set'으로 시작하면 모든 함수 호출을 기록한다"와 같이 어느 코드가 포인트컷(pointcut) 사양을 통해 수정되는지를 따로 지정한다. 이를 통해 기능의 코드 핵심부를 어수선하게 채우지 않고도 비즈니스 로직에 핵심적이지 않은 동작들을 프로그램에 추가할 수 있게 한다. 관점 지향 프로그래밍은 관점 지향 소프트웨어 개발의 토대를 형성한다. [참조](https://ko.wikipedia.org/wiki/%EA%B4%80%EC%A0%90_%EC%A7%80%ED%96%A5_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D)
+
+![AOP](http://cfile4.uf.tistory.com/image/99A33D475A9660D20D3C5B)
+
+![JOINTPOINT](http://cfile21.uf.tistory.com/image/991B4D495A9660D2167C95)
 
 ### 2.4 코드 검사 도구
 
