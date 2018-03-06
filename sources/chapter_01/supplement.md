@@ -101,3 +101,30 @@ Bird.prototype.eat = function(food) {
 
 donald.eat('감자');
 ```
+
+### Object의 `__proto__`를 이용한 상속
+```javascript
+var bird = {
+  name: '',
+  fly: function() {
+    return this.name + '이(가) 날고 있어요';
+  }
+};
+```
+[Object.create(proto[, propertiesObject])](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
+```javascript
+var duck = Object.create(bird);
+console.log('duck.name:', duck.name);
+
+duck.name = 'Donald';
+console.log('duck.name:', duck.name);
+console.log('duck.__proto__.name:', duck.name);
+
+duck.fly();
+
+bird.eat = function(food) {
+  return this.name + '이(가) ' + food + '를 먹고 있어요.';
+};
+
+console.log('duck.eat("고구마"):', duck.eat('고구마'));
+```
