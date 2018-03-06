@@ -18,7 +18,7 @@
 + 스코프는 중첩 함수로 다스린다.
 + 규약을 지켜 코딩한다.
 
-[example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_user_registration.html)
+[example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/supplement.d3js.html)
 
 
 #### 1.1.3 소프트웨어 공학 원칙을 적용하라
@@ -90,7 +90,7 @@ var result = Users.registration();
 result.validateAndRegisterUser(user);
 ```
 
-##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_user_registration.html)
+##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/supplement.user.registration.html)
 
 ```javascript
 var Users = Users || {};
