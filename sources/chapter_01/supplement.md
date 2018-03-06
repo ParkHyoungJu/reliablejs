@@ -1,10 +1,33 @@
 # 객체지향프로그래밍(Object Oritented Programming)
 
 ## 추상화(Abstraction)와 상속(Inheritance)
-![abstraction_and_inheritance](https://raw.githubusercontent.com/eddie-yim/reliablejs/master/sources/chapter_01/supplement.001.png)
+![abstraction_and_inheritance](supplement.001.png)
+
+## 객체의 내부 구성요소
+
+```javascript
+{
+  constructor: function Object(){},
+  hasOwnProperty: function hasOwnProperty(){},
+  isPrototypeOf: function isPrototypeOf(){},
+  propertyIsEnumerable: function propertyIsEnumerable(){},
+  toLocaleString: function toLocaleString(){},
+  toString: function toString(){},
+  valueOf: function valueOf(){},
+  __defineGetter__: function __defineGetter__(){},
+  __defineSetter__: function __defineSetter__(){},
+  __lookupGetter__: function __lookupGetter__(){},
+  __lookupSetter__: function __lookupSetter__(){},
+  __proto__: {}
+};
+
+```
+
 
 
 ## 객체를 생성하는 방법(오리를 만드는 방법)
+![object_instance](supplement.002.png)
+
 ```javascript
 // 인스턴스를 바로 생성해서 속성을 추가
 var rubberDuck = new Object();// 리터럴 표현식: {}
