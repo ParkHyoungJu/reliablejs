@@ -1,7 +1,7 @@
 # 객체지향프로그래밍(Object Oritented Programming)
 
 ## 추상화(Abstraction)와 상속(Inheritance)
-![abstraction_and_inheritance](supplement.001.png)
+![abstraction_and_inheritance](supplement.object.001.png)
 
 ## 객체의 내부 구성요소
 
@@ -26,7 +26,7 @@
 
 
 ## 객체를 생성하는 방법(오리를 만드는 방법)
-![object_instance](supplement.002.png)
+![object_instance](supplement.object.002.png)
 
 ```javascript
 // 인스턴스를 바로 생성해서 속성을 추가
