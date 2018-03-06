@@ -152,4 +152,5 @@ bird.eat = function(food) {
 console.log('duck.eat("고구마"):', duck.eat('고구마'));
 ```
 
+## Prototype Chain
 ![prototype_chain](supplement.object.003.png)
