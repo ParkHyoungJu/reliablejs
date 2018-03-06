@@ -10,7 +10,7 @@
 + 테니스를 하듯 공을 치면 **절대로** 스쿼시를 잘 할 수 없다.
 + 자바스크립트와 다른 프로그래밍 언어의 **차이점을 스스로 익혀야 한다.**
 + 자바스크립트는 **싱글 스레드**로 움직인다.
-  + 자바스크립트 엔은 이벤트 루프에서 한 번에 하나씩 함수를 꺼내 실행한다.
+  + 자바스크립트 엔진은 이벤트 루프에서 한 번에 하나씩 함수를 꺼내 실행한다.
 
 #### 1.1.2 대규모 시스템에서 자바스크립트 함정을 피하라
 
@@ -68,9 +68,10 @@
 
 ```javascript
 var Users = Users || {};
+
 Users.registration = function() {
     return {
-        validateAndRegisterUser: function validateAndDisplayUser(user) {
+        validateAndRegisterUser: function (user) {
             // 1. user 객체가 올바르게 채워졌는지 검증: 사용자 검증
             if (!user || user.name === "" || user.password === "" || user.password.length < 6) {
                 throw new Error("사용자 인증이 실패했습니다.");
@@ -84,6 +85,9 @@ Users.registration = function() {
         }
     };
 };
+
+var result = Users.registration();
+result.validateAndRegisterUser(user);
 ```
 
 ##### TODO [example html](https://github.com/eddie-yim/reliablejs/blob/master/sources/chapter_01/example_user_registration.html)
@@ -104,4 +108,11 @@ Users.registration = function(userValidator, userRegister, userDisplay) {
         }
     };
 };
+
+
+
+var result = Users.registration(userValidator, userRegister, userDisplay);
+result.validateAndRegister(user);
+
+
 ```
