@@ -1,12 +1,12 @@
 # 자바스크립트 패턴과 테스트
 
-## 6장 프로미스 패턴
+## 6장 프라미스 패턴
 
 ### 6.1 단위 테스트
 
-#### 6.1.1 프로미스 사용법
+#### 6.1.1 프라미스 사용법
 
-- 프로미스는 비동기 처리시 사용되는 객체
+- 프라미스는 비동기 처리시 사용되는 객체
 - 성공 콜백과 실패 콜백
 
 ```javascript
@@ -32,209 +32,242 @@ Conference.checkInService = function(checkInRecorder) {
 ```
 
 ```javascript
-describe('Conference.attendeeCollection', function() {
-    
-  describe('contains(attendee)', function() {
-    // contains 테스트
+describe('Conference.checkInService', function() {
+  'use strict';
+
+  var checkInService,
+      checkInRecorder,
+      attendee;
+
+  beforeEach(function() {
+    checkInRecorder = Conference.checkInRecorder();
+    checkInService = Conference.checkInService(checkInRecorder);
+    attendee = Conference.attendee('형철', '서');
   });
-  describe('add(attendee)', function() {
-    // add 테스트
-  });
-  describe('remove(attendee)', function() {
-    // remove 테스트
-  });
 
-  describe('iterate(callback)', function() {
-    var collection, callbackSpy;
+  describe('checkInService.checkIn(attendee)', function() {
 
-    // 도우미 함수
-    function addAttendeesToCollection(attendeeArray) {
-      attendeeArray.forEach(function(attendee) {
-        collection.add(attendee);
-      });
-    }
-
-    function verifyCallbackWasExecutedForEachAttendee(attendeeArray) {
-      // 각 원소마다 한번씩 스파이가 호출되었는지 확인한다
-      expect(callbackSpy.calls.count()).toBe(attendeeArray.length);
-
-      // 각 호출마다 spy에 전달한 첫 번째 인자가 해당 attendee인지 확인한다
-      var allCalls = callbackSpy.calls.all();
-      for (var i = 0; i < allCalls.length; i++) {
-        expect(allCalls[i].args[0]).toBe(attendeeArray[i]);
-      }
-    }
-
-    beforeEach(function() {
-      collection = Conference.attendeeCollection();
-      callbackSpy = jasmine.createSpy();
-    });
-
-    it('빈 콜렉션에서는 콜백을 실행하지 않는다', function() {
-      collection.iterate(callbackSpy);
-      expect(callbackSpy).not.toHaveBeenCalled();
-    });
-
-    it('원소가 하나뿐인 콜렉션은 콜백을 한번만 실행한다', function() {
-      var attendees = [
-        Conference.attendee('윤지', '김')
-      ];
-      addAttendeesToCollection(attendees);
-
-      collection.iterate(callbackSpy);
-
-      verifyCallbackWasExecutedForEachAttendee(attendees);
-    });
-
-    it('콜렉션 원소마다 한번씩 콜백을 실행한다', function() {
-      var attendees = [
-        Conference.attendee('태희', '김'),
-        Conference.attendee('정윤', '최'),
-        Conference.attendee('유리', '성')
-      ];
-      addAttendeesToCollection(attendees);
-
-      collection.iterate(callbackSpy);
-
-      verifyCallbackWasExecutedForEachAttendee(attendees);
-    });
-  });
-});
-```
-
-#### 5.1.2 콜백 함수의 작성과 테스팅
-
-```javascript
-var attendees = Conference.attendeeCollection();
-
-attendees.iterate(function(attendee){
-    attendee.checkIn();
-});
-```
-
-- 단위테스트의 어려움
-- 디버깅의 어려움
-
-```javascript
-attendees.iterate(function doCheckIn(attendee){
-    attendee.checkIn();
-});
-```
-
-
-
-### 5.2 문제예방
-
-#### 5.2.1 콜백 화살 눌러 펴기
-
-```javascript
-CallbackArrow = CallbackArrow || {};
-
-CallbackArrow.rootFunction = function(){
-    CallbackArrow.firstFunction(function(arg){
-        // 첫번째 콜백 로직
-        CallbackArrow.secondFunction(function(arg){
-            // 두번째 콜백 로직
-            CallbackArrow.thirdFunction(function(arg){
-                // 세번째 콜백 로직
-            });
+    describe('checkInRecorder 성공 시', function() {
+      var checkInNumber = 1234;
+      beforeEach(function() {
+        spyOn(checkInRecorder,'recordCheckIn').and.callFake(function() {
+          return Promise.resolve(checkInNumber);
         });
-    });
-};
+      });
 
-CallbackArrow.firstFunction = function(callback1){
-    callback1(arg);
-};
-CallbackArrow.secondFunction = function(callback2){
-    callback2(arg);
-};
-CallbackArrow.thirdFunction = function(callback3){
-    callback3(arg);
-};
+      // 5장과 동일한 테스트
+      it('참가자를 체크한 것으로 표시한다', function() {
+        checkInService.checkIn(attendee);
+        expect(attendee.isCheckedIn()).toBe(true);
+      });
+      it('체크인을 등록한다', function() {
+        checkInService.checkIn(attendee);
+        expect(checkInRecorder.recordCheckIn).toHaveBeenCalledWith(attendee);
+      });
+
+      // 6장에서 추가된 테스트
+      it("참가자의 checkInNumber를 지정한다", function(done) {
+        checkInService.checkIn(attendee);
+        expect(attendee.getCheckInNumber()).toBe(checkInNumber);
+      });
+    });
+  });
+});
 ```
 
-- 단위테스트의 어려움
-- 가독성 저하
-- 수정의 어려움
+- setCheckInNumber의 늦은 호출
 
 
 
 ```javascript
-CallbackArrow = CallbackArrow || {};
-
-CallbackArrow.rootFunction = function(){
-    CallbackArrow.firstFunction(CallbackArrow.firstCallback);
-};
-CallbackArrow.firstFunction = function(calback1){
-    callback1(arg);
-};
-CallbackArrow.secondFunction = function(calback2){
-    callback2(arg);
-};
-CallbackArrow.thirdFunction = function(calback3){
-    callback3(arg);
-};
-CallbackArrow.firstCallback = function(){
-    CallbackArrow.secondFunction(CallbackArrow.secondCallback);
-};
-CallbackArrow.secondCallback = function(){
-    CallbackArrow.thirdFunction(CallbackArrow.secondCallback);
-};
-CallbackArrow.thirdCallback = function(){
-    // 콜백 로직
-};
+it("참가자의 체크인 번호를 세팅한다.", function(done) {
+    checkInService.checkIn(attendee).then(
+        function promiseResolved() {
+            expect(attendee.getCheckInNumber()).toBe(checkInNumber);
+            done();
+        },
+        function promiseRejected() {
+            expect('이 실패 분기 코드가 실행됐다').toBe(false);
+            done();
+        });
+});
 ```
 
 
 
-#### 5.2.2 this를 조심하라
+#### 6.1.2 프라미스 생성과 반환
 
 ```javascript
 var Conference = Conference || {};
-Conference.checkedInAttendeeCounter = function() {
-  var checkedInAttendees = 0;
+
+Conference.checkInRecorder = function() {
+    
+  var messages = {
+    mustBeCheckedIn: '참가자는 체크인된 것으로 표시되어야 한다.',
+  };
+
   return {
-    increment: function() {
-      checkedInAttendees++;
+    getMessages: function() {
+      return messages;
     },
-    getCount: function() {
-      return checkedInAttendees;
-    },
-    countIfCheckedIn: function(attendee) {
-      if (attendee.isCheckedIn()) {
-        this.increment();
-      }
+
+    recordCheckIn: function(attendee) {
+      return new Promise( function(resolve, reject) {
+        if (attendee.isCheckedIn()) {
+          resolve(4444); // 일단, 아무 숫자나 넣는다.
+        } else {
+          reject(new Error(messages.mustBeCheckedIn));
+        }
+      });
     }
   };
 };
 
-
-var counter = Conference.checkedInAttendeeCounter();
-counter.countIfCheckedIn(attendee);
 ```
+
+
+
+#### 6.1.3 XMLHttpRequest 테스팅
 
 
 
 ```javascript
-var Conference = Conference || {};
+ describe('Conference.checkInRecorder', function() {
+  'use strict';
 
-Conference.checkedInAttendeeCounter = function() {
+  var attendee, checkInRecorder;
+  beforeEach(function() {
+    attendee = Conference.attendee('일웅','이');
+    attendee.setId(777);
+    checkInRecorder = Conference.checkInRecorder();
 
-  var checkedInAttendees = 0,
-      self = {
-        increment: function() {
-          checkedInAttendees++;
+    // 재스민의 모의 XMLHttpRequest 라이브러리를 설치한다.
+    jasmine.Ajax.install();
+  });
+
+  afterEach(function() {
+    // 다 끝난 후에는 원래 XMLHttpRequests로 돌려놓는다.
+    jasmine.Ajax.uninstall();
+  });
+
+  describe('recordCheckIn(attendee)', function() {
+
+    it('HTTP 요청이 성공하여 참가자가 체크인되면 체크인 번호로 이루어진 프라미스를 반환한다', function() {
+      var expectedCheckInNumber = 1234,
+          request;
+      attendee.checkIn();
+      checkInRecorder.recordCheckIn(attendee).then(
+        function promiseResolved(actualCheckInNumber) {
+          expect(actualCheckInNumber).toBe(expectedCheckInNumber);
+          done();        },
+        function promiseRejected() {
+          expect('프라미스는 버려졌다').toBe(false);
+        });
+       request = jasmine.Ajax.requests.mostRecent();
+       expect(request.url).toBe('/checkin/' + attendee.getId());
+       request.response({
+         "status": 200,
+         "contentType": "text/plain",
+         "responseText": expectedCheckInNumber
+       });
+    });
+
+    it('HTTP 요청이 실패하여 참가자가 체크인되지 않으면 정확한 메시지와 함께 버림 프라미스를 반환한다', function() {
+      var request;
+      attendee.checkIn();
+      checkInRecorder.recordCheckIn(attendee).then(
+        function promiseResolved(actualCheckInNumber) {
+          expect('프라미스는 귀결됐다').toBe(false);
         },
-        getCount: function() {
-          return checkedInAttendees;
-        },
-        countIfCheckedIn: function(attendee) {
-          if (attendee.isCheckedIn()) {
-            self.increment();
-          }
-        }
-      };
+        function promiseRejected(reason) {
+          expect(reason instanceof Error).toBe(true);
+          expect(reason.message)
+            .toBe(checkInRecorder.getMessages().httpFailure);
+        });
+       request = jasmine.Ajax.requests.mostRecent();
+       expect(request.url).toBe('/checkin/' + attendee.getId());
+       request.response({
+         "status": 404,
+         "contentType": "text/plain",
+         "responseText": "이래서 에러가 났습니다."
+       });
+    });
 
-  return self;
-};
+    it('참가자가 체크인되지 않으면 에러와 버림 프라미스를 반환한다', function(done) {
+      checkInRecorder.recordCheckIn(attendee).then(
+        function promiseResolved() {
+          expect('프라미스는 귀결됐다').toBe(false);
+          done();
+        },
+        function promiseRejected(reason) {
+          expect(reason instanceof Error).toBe(true);
+          expect(reason.message)
+            .toBe(checkInRecorder.getMessages().mustBeCheckedIn);
+          done();
+        });
+    });
+  });
+});
 ```
+
+
+
+### 6.2 프라미스 체이닝
+
+```javascript
+checkInService.checkIn(attendee)
+  .then(
+    function onCheckInResolved(checkInNUmber){
+        return badgePrintingService.print(checkInNumber);
+    })
+  .then(
+    function onBadgePrintResolved(badgeNumber){
+        return doorPrizeEnteringService.enter(attendee, badgeNumber);
+    });
+```
+
+
+
+### 6.3 프라미스 래퍼
+
+- 앵귤러JS의 $q나 크리스 코왈의 Q 같은 프라미스 래퍼를 이용하면 단위테스트에서 귀결/버림을 더 효과적으로 다룰 수 있다.
+
+### 6.4 상태와 숙명
+
+##### 상태
+
+- Pending(대기) : 비동기 처리 로직이 아직 완료되지 않은 상태
+
+  ```javascript
+  new Promise();
+
+  new Promise(function (resolve, reject) {
+    // ...
+  });
+  ```
+
+- Fulfilled(이행) : 비동기 처리가 완료되어 프로미스가 결과 값을 반환해준 상태
+
+  ```javascript
+  new Promise(function (resolve, reject) {
+    resolve();
+  });
+  ```
+
+- Rejected(실패) : 비동기 처리가 실패하거나 오류가 발생한 상태
+
+  ```javascript
+  new Promise(function (resolve, reject) {
+    reject();
+  });
+  ```
+
+  ​
+
+##### 숙명
+
+- resolved(귀결)
+- unresolved(미결)
+
+
+
